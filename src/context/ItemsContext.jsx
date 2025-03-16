@@ -8,89 +8,168 @@ export const useItems = () => useContext(ItemsContext);
 
 export const ItemsProvider = ({ children }) => {
   // State for lost and found items
-  const [lostItems, setLostItems] = useState([]);
-  const [foundItems, setFoundItems] = useState([]);
+  const [lostItems, setLostItems] = useState(() => {
+    // Initialize state from localStorage on component mount
+    try {
+      const storedItems = localStorage.getItem('lostItems');
+      return storedItems ? JSON.parse(storedItems) : [];
+    } catch (error) {
+      console.error('Error loading lost items from localStorage:', error);
+      return [];
+    }
+  });
   
-  // Load items from localStorage on initial render
-  useEffect(() => {
-    const storedLostItems = localStorage.getItem('lostItems');
-    const storedFoundItems = localStorage.getItem('foundItems');
-    
-    if (storedLostItems) {
-      setLostItems(JSON.parse(storedLostItems));
+  const [foundItems, setFoundItems] = useState(() => {
+    // Initialize state from localStorage on component mount
+    try {
+      const storedItems = localStorage.getItem('foundItems');
+      return storedItems ? JSON.parse(storedItems) : [];
+    } catch (error) {
+      console.error('Error loading found items from localStorage:', error);
+      return [];
     }
-    
-    if (storedFoundItems) {
-      setFoundItems(JSON.parse(storedFoundItems));
-    }
-  }, []);
+  });
   
   // Save items to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('lostItems', JSON.stringify(lostItems));
+    try {
+      localStorage.setItem('lostItems', JSON.stringify(lostItems));
+      console.log('Saved lost items to localStorage:', lostItems);
+    } catch (error) {
+      console.error('Error saving lost items to localStorage:', error);
+    }
   }, [lostItems]);
   
   useEffect(() => {
-    localStorage.setItem('foundItems', JSON.stringify(foundItems));
+    try {
+      localStorage.setItem('foundItems', JSON.stringify(foundItems));
+      console.log('Saved found items to localStorage:', foundItems);
+    } catch (error) {
+      console.error('Error saving found items to localStorage:', error);
+    }
   }, [foundItems]);
   
   // Add a new lost item
   const addLostItem = (item) => {
-    const newItem = {
-      ...item,
-      id: Date.now(),
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-    };
-    setLostItems(prevItems => [newItem, ...prevItems]);
-    return newItem;
+    try {
+      const newItem = {
+        ...item,
+        id: Date.now(),
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+      };
+      
+      const updatedItems = [newItem, ...lostItems];
+      setLostItems(updatedItems);
+      
+      // Directly save to localStorage as a backup
+      localStorage.setItem('lostItems', JSON.stringify(updatedItems));
+      console.log('Added lost item:', newItem);
+      
+      return newItem;
+    } catch (error) {
+      console.error('Error adding lost item:', error);
+      throw error;
+    }
   };
   
   // Add a new found item
   const addFoundItem = (item) => {
-    const newItem = {
-      ...item,
-      id: Date.now(),
-      status: 'unclaimed',
-      createdAt: new Date().toISOString(),
-    };
-    setFoundItems(prevItems => [newItem, ...prevItems]);
-    return newItem;
+    try {
+      const newItem = {
+        ...item,
+        id: Date.now(),
+        status: 'unclaimed',
+        createdAt: new Date().toISOString(),
+      };
+      
+      const updatedItems = [newItem, ...foundItems];
+      setFoundItems(updatedItems);
+      
+      // Directly save to localStorage as a backup
+      localStorage.setItem('foundItems', JSON.stringify(updatedItems));
+      console.log('Added found item:', newItem);
+      
+      return newItem;
+    } catch (error) {
+      console.error('Error adding found item:', error);
+      throw error;
+    }
   };
   
   // Update a lost item
   const updateLostItem = (id, updates) => {
-    setLostItems(prevItems => 
-      prevItems.map(item => 
+    try {
+      const updatedItems = lostItems.map(item => 
         item.id === id ? { ...item, ...updates } : item
-      )
-    );
+      );
+      setLostItems(updatedItems);
+      localStorage.setItem('lostItems', JSON.stringify(updatedItems));
+    } catch (error) {
+      console.error('Error updating lost item:', error);
+      throw error;
+    }
   };
   
   // Update a found item
   const updateFoundItem = (id, updates) => {
-    setFoundItems(prevItems => 
-      prevItems.map(item => 
+    try {
+      const updatedItems = foundItems.map(item => 
         item.id === id ? { ...item, ...updates } : item
-      )
-    );
+      );
+      setFoundItems(updatedItems);
+      localStorage.setItem('foundItems', JSON.stringify(updatedItems));
+    } catch (error) {
+      console.error('Error updating found item:', error);
+      throw error;
+    }
   };
   
   // Delete a lost item
   const deleteLostItem = (id) => {
-    setLostItems(prevItems => prevItems.filter(item => item.id !== id));
+    try {
+      const updatedItems = lostItems.filter(item => item.id !== id);
+      setLostItems(updatedItems);
+      localStorage.setItem('lostItems', JSON.stringify(updatedItems));
+    } catch (error) {
+      console.error('Error deleting lost item:', error);
+      throw error;
+    }
   };
   
   // Delete a found item
   const deleteFoundItem = (id) => {
-    setFoundItems(prevItems => prevItems.filter(item => item.id !== id));
+    try {
+      const updatedItems = foundItems.filter(item => item.id !== id);
+      setFoundItems(updatedItems);
+      localStorage.setItem('foundItems', JSON.stringify(updatedItems));
+    } catch (error) {
+      console.error('Error deleting found item:', error);
+      throw error;
+    }
   };
   
   // Get user's items
   const getUserItems = (userId) => {
-    const userLostItems = lostItems.filter(item => item.userId === userId);
-    const userFoundItems = foundItems.filter(item => item.userId === userId);
-    return { userLostItems, userFoundItems };
+    try {
+      const userLostItems = lostItems.filter(item => 
+        item.userId === userId || item.userEmail === userId
+      );
+      const userFoundItems = foundItems.filter(item => 
+        item.userId === userId || item.userEmail === userId
+      );
+      return { userLostItems, userFoundItems };
+    } catch (error) {
+      console.error('Error getting user items:', error);
+      return { userLostItems: [], userFoundItems: [] };
+    }
+  };
+  
+  // Debug function to check localStorage
+  const debugStorage = () => {
+    console.log('Current localStorage:');
+    console.log('lostItems:', JSON.parse(localStorage.getItem('lostItems') || '[]'));
+    console.log('foundItems:', JSON.parse(localStorage.getItem('foundItems') || '[]'));
   };
   
   return (
@@ -104,7 +183,8 @@ export const ItemsProvider = ({ children }) => {
         updateFoundItem,
         deleteLostItem,
         deleteFoundItem,
-        getUserItems
+        getUserItems,
+        debugStorage
       }}
     >
       {children}

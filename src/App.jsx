@@ -161,6 +161,15 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Initialize localStorage if needed
+    if (!localStorage.getItem('lostItems')) {
+      localStorage.setItem('lostItems', JSON.stringify([]));
+    }
+    
+    if (!localStorage.getItem('foundItems')) {
+      localStorage.setItem('foundItems', JSON.stringify([]));
+    }
+    
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         localStorage.setItem('user', JSON.stringify(currentUser));

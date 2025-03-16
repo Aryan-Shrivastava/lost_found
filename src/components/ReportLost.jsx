@@ -21,7 +21,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ReportLost = () => {
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-  const { addLostItem } = useItems();
+  const { addLostItem, debugStorage } = useItems();
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -86,6 +86,16 @@ const ReportLost = () => {
         return;
       }
 
+      // Validate required fields
+      if (!formData.title || !formData.location || !formData.date) {
+        setSnackbar({
+          open: true,
+          message: 'Please fill in all required fields',
+          severity: 'error',
+        });
+        return;
+      }
+
       // Convert images to base64 strings
       const imagePromises = images.map(image => {
         return new Promise((resolve, reject) => {
@@ -101,9 +111,18 @@ const ReportLost = () => {
       // Use the first image as the main image
       const mainImage = base64Images.length > 0 ? base64Images[0] : '';
 
+      console.log('Creating new lost item with data:', formData);
+
       // Create a new lost item object
       const newLostItem = {
-        ...formData,
+        title: formData.title,
+        description: formData.description,
+        location: formData.location,
+        date: formData.date,
+        contactInfo: formData.contactInfo,
+        email: formData.email,
+        name: formData.name,
+        reward: formData.reward,
         image: mainImage,
         images: base64Images,
         userId: currentUser.uid,
@@ -111,13 +130,19 @@ const ReportLost = () => {
         userName: currentUser.displayName || 'Anonymous',
       };
 
+      console.log('Submitting new lost item:', newLostItem);
+
       // Add the item to context
-      addLostItem(newLostItem);
+      const savedItem = addLostItem(newLostItem);
+      console.log('Item saved successfully:', savedItem);
+      
+      // Debug localStorage after saving
+      debugStorage();
 
       // Show success message
       setSnackbar({
         open: true,
-        message: 'Lost item reported successfully!',
+        message: 'Lost item reported successfully! Redirecting to gallery...',
         severity: 'success',
       });
 
@@ -135,9 +160,12 @@ const ReportLost = () => {
       setImages([]);
       setPreviewImages([]);
       
-      // Navigate to profile after a short delay
+      // Store the newly added item ID in localStorage to highlight it in Gallery
+      localStorage.setItem('highlightItem', savedItem.id);
+      
+      // Navigate to gallery after a short delay
       setTimeout(() => {
-        navigate('/profile');
+        navigate('/gallery');
       }, 2000);
     } catch (error) {
       console.error('Error reporting lost item:', error);
@@ -154,16 +182,16 @@ const ReportLost = () => {
   };
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ mb: 4, fontWeight: 'bold' }}>
           Report a Lost Item
         </Typography>
 
         <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-          <form onSubmit={handleSubmit}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Item Name"
@@ -326,7 +354,7 @@ const ReportLost = () => {
                 </Box>
               </Grid>
             </Grid>
-          </form>
+          </Box>
         </Paper>
       </Box>
 

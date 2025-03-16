@@ -46,7 +46,7 @@ const categories = [
 
 const ReportFound = () => {
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-  const { addFoundItem } = useItems();
+  const { addFoundItem, debugStorage } = useItems();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -132,6 +132,8 @@ const ReportFound = () => {
     setError('');
     
     try {
+      console.log('Creating new found item with data:', formData);
+      
       // Create a new found item object
       const newFoundItem = {
         title: formData.itemName,
@@ -148,11 +150,22 @@ const ReportFound = () => {
         userName: currentUser.displayName || '',
       };
       
+      console.log('Submitting new found item:', newFoundItem);
+      
       // Add the item to context
-      addFoundItem(newFoundItem);
+      const savedItem = addFoundItem(newFoundItem);
+      console.log('Item saved successfully:', savedItem);
+      
+      // Debug localStorage after saving
+      debugStorage();
       
       // Show success message
       setSuccess(true);
+      setSnackbar({
+        open: true,
+        message: 'Found item reported successfully! Redirecting to gallery...',
+        severity: 'success',
+      });
       setLoading(false);
       
       // Reset form
@@ -168,9 +181,12 @@ const ReportFound = () => {
       });
       setImagePreviewUrls([]);
       
-      // Navigate to profile after a short delay
+      // Store the newly added item ID in localStorage to highlight it in Gallery
+      localStorage.setItem('highlightItem', savedItem.id);
+      
+      // Navigate to gallery after a short delay
       setTimeout(() => {
-        navigate('/profile');
+        navigate('/gallery');
       }, 2000);
     } catch (error) {
       console.error('Error reporting found item:', error);

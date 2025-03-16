@@ -46,31 +46,42 @@ const Profile = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { lostItems, foundItems } = useItems();
+  const { lostItems, foundItems, debugStorage } = useItems();
 
   useEffect(() => {
+    // Debug localStorage on component mount
+    debugStorage();
+    
     // Get user from localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
       
+      console.log('Current user:', parsedUser);
+      console.log('Available lost items:', lostItems);
+      console.log('Available found items:', foundItems);
+      
       // Filter items for this user
       if (lostItems && lostItems.length > 0) {
         const filteredLostItems = lostItems.filter(item => 
-          item.userId === parsedUser.uid || item.userEmail === parsedUser.email
+          item.userId === parsedUser.uid || 
+          item.userEmail === parsedUser.email
         );
+        console.log('Filtered lost items for user:', filteredLostItems);
         setUserLostItems(filteredLostItems);
       }
       
       if (foundItems && foundItems.length > 0) {
         const filteredFoundItems = foundItems.filter(item => 
-          item.userId === parsedUser.uid || item.userEmail === parsedUser.email
+          item.userId === parsedUser.uid || 
+          item.userEmail === parsedUser.email
         );
+        console.log('Filtered found items for user:', filteredFoundItems);
         setUserFoundItems(filteredFoundItems);
       }
     }
-  }, [lostItems, foundItems]);
+  }, [lostItems, foundItems, debugStorage]);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
