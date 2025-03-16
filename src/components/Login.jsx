@@ -313,7 +313,8 @@ const Login = () => {
                   className="app-title"
                   sx={{ mb: 2 }}
                 >
-                  Lost & Found
+                  Apna \b
+                  Saaman
                 </Typography>
                 <Typography 
                   variant="body2" 
