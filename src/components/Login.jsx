@@ -313,7 +313,7 @@ const Login = () => {
                   className="app-title"
                   sx={{ mb: 2 }}
                 >
-                  Apna \b
+                  Apna 
                   Saaman
                 </Typography>
                 <Typography 
