@@ -28,9 +28,15 @@ import {
   Lock,
 } from '@mui/icons-material';
 import { auth, googleProvider } from '../firebase';
-import { signInWithPopup, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { 
+  signInWithPopup, 
+  onAuthStateChanged, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword,
+  updateProfile
+} from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import './Login.css';
+import '../styles/Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -193,7 +199,7 @@ const Login = () => {
         const result = await createUserWithEmailAndPassword(auth, email, password);
         
         // Update user profile with name
-        await result.user.updateProfile({
+        await updateProfile(result.user, {
           displayName: name
         });
         
@@ -236,28 +242,28 @@ const Login = () => {
                 <div className="carousel" ref={carouselRef}>
                   <div className="carousel__item carousel__item--1">
                     <div className="carousel-content">
-                      <Typography variant="h4" className="carousel-title">Lost Something?</Typography>
-                      <img src="https://images.unsplash.com/photo-1616077168712-fc6c788bc4dc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="Lost items" className="carousel-image" />
+                      <Typography variant="h4" className="carousel-title">IIIT Hyderabad</Typography>
+                      <img src="https://www.iiit.ac.in/wp-content/uploads/IIIT-Hyderabad-Campus-1.jpg" alt="IIIT Hyderabad Campus" className="carousel-image" />
                       <Typography variant="body2" className="carousel-description">
-                        Report your lost items and let the community help you find them
+                        A premier research institution with a 66-acre campus in Gachibowli
                       </Typography>
                     </div>
                   </div>
                   <div className="carousel__item carousel__item--2">
                     <div className="carousel-content">
-                      <Typography variant="h4" className="carousel-title">Found Something?</Typography>
-                      <img src="https://images.unsplash.com/photo-1586892477838-2b96e85e0f96?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80" alt="Found items" className="carousel-image" />
+                      <Typography variant="h4" className="carousel-title">Academic Excellence</Typography>
+                      <img src="https://www.iiit.ac.in/wp-content/uploads/IIIT-Hyderabad-Library.jpg" alt="IIIT Hyderabad Library" className="carousel-image" />
                       <Typography variant="body2" className="carousel-description">
-                        Help others by reporting items you've found
+                        State-of-the-art facilities for research and education
                       </Typography>
                     </div>
                   </div>
                   <div className="carousel__item carousel__item--3">
                     <div className="carousel-content">
-                      <Typography variant="h4" className="carousel-title">Connect & Recover</Typography>
-                      <img src="https://images.unsplash.com/photo-1579621970795-87facc2f976d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="Connect" className="carousel-image" />
+                      <Typography variant="h4" className="carousel-title">Innovation Hub</Typography>
+                      <img src="https://www.iiit.ac.in/wp-content/uploads/IIIT-Hyderabad-Research-Center.jpg" alt="IIIT Hyderabad Research Center" className="carousel-image" />
                       <Typography variant="body2" className="carousel-description">
-                        Our smart matching system connects lost items with found reports
+                        Leading research in computer science, electronics, and communications
                       </Typography>
                     </div>
                   </div>
@@ -288,22 +294,11 @@ const Login = () => {
           </Grid>
           
           {/* Right side - Auth Forms */}
-          <Grid item xs={12} md={6} sx={{ height: '100%' }}>
+          <Grid item xs={12} md={6} sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Fade in={true} timeout={800}>
               <Paper
                 elevation={24}
-                className="auth-container glass-container"
-                sx={{
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '10px',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  padding: { xs: 2, sm: 4 },
-                }}
+                className="auth-container"
               >
                 <Typography 
                   variant="h4" 
@@ -311,15 +306,20 @@ const Login = () => {
                   align="center" 
                   gutterBottom
                   className="app-title"
+                  sx={{ mb: 2 }}
                 >
                   Lost & Found
                 </Typography>
-                <Typography variant="body2" className="app-subtitle">
+                <Typography 
+                  variant="body2" 
+                  className="app-subtitle"
+                  sx={{ mb: 2 }}
+                >
                   The easiest way to recover lost items and help others
                 </Typography>
 
                 {/* Login/Signup Toggle Slider */}
-                <Box className="auth-toggle-container">
+                <Box className="auth-toggle-container" sx={{ mb: 3 }}>
                   <div className="auth-toggle">
                     <span className={!isSignUp ? 'active' : ''}>LOG IN</span>
                     <div className="slider-container">
@@ -337,21 +337,13 @@ const Login = () => {
                   <Alert 
                     severity="error" 
                     className="error-alert"
-                    sx={{ 
-                      mb: 2, 
-                      backgroundColor: 'rgba(211, 47, 47, 0.1)', 
-                      color: '#f44336',
-                      border: '1px solid rgba(211, 47, 47, 0.2)',
-                      '& .MuiAlert-icon': {
-                        color: '#f44336'
-                      }
-                    }}
+                    sx={{ mb: 3 }}
                   >
                     {error}
                   </Alert>
                 )}
 
-                <Box component="form" onSubmit={handleSubmit} className="auth-form">
+                <Box component="form" onSubmit={handleSubmit} className="auth-form" sx={{ mt: 1 }}>
                   {isSignUp && (
                     <TextField
                       fullWidth
@@ -474,6 +466,7 @@ const Login = () => {
                     disabled={loading}
                     className="auth-button"
                     size="small"
+                    sx={{ mt: 2 }}
                   >
                     {loading ? (
                       <CircularProgress size={20} sx={{ color: '#fff' }} />
@@ -482,7 +475,7 @@ const Login = () => {
                     )}
                   </Button>
 
-                  <div className="divider">
+                  <div className="divider" style={{ margin: '20px 0' }}>
                     <span>OR</span>
                   </div>
                   
@@ -507,10 +500,10 @@ const Login = () => {
                         textDecoration: 'none',
                         transition: 'all 0.3s ease',
                         textAlign: 'center',
-                        marginTop: 1,
-                        fontSize: '0.8rem',
+                        marginTop: 2,
+                        fontSize: '0.75rem',
                         '&:hover': {
-                          color: '#e50914',
+                          color: '#ff0000',
                           textDecoration: 'none',
                         }
                       }}
@@ -522,6 +515,7 @@ const Login = () => {
                   <Typography 
                     variant="caption" 
                     className="terms-text"
+                    sx={{ mt: 3 }}
                   >
                     By signing in/up, you agree to our Terms of Service and Privacy Policy
                   </Typography>
