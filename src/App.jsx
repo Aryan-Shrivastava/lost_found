@@ -11,6 +11,8 @@ import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import FAQ from './components/FAQ';
 import About from './components/About';
+import Profile from './components/Profile';
+import Settings from './components/Settings';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import BackgroundParticles from './components/BackgroundParticles';
@@ -224,6 +226,24 @@ function App() {
               <ProtectedRoute user={user}>
                 <Navbar />
                 <Gallery />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute user={user}>
+                <Navbar />
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute user={user}>
+                <Navbar />
+                <Settings />
               </ProtectedRoute>
             }
           />

@@ -351,13 +351,25 @@ const Navbar = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                <MenuItem onClick={handleCloseUserMenu} sx={{ color: '#fff' }}>
+                <MenuItem 
+                  onClick={() => {
+                    handleCloseUserMenu();
+                    navigate('/profile');
+                  }} 
+                  sx={{ color: '#fff' }}
+                >
                   <ListItemIcon>
                     <PersonIcon fontSize="small" sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
                   </ListItemIcon>
                   <Typography textAlign="center">Profile</Typography>
                 </MenuItem>
-                <MenuItem onClick={handleCloseUserMenu} sx={{ color: '#fff' }}>
+                <MenuItem 
+                  onClick={() => {
+                    handleCloseUserMenu();
+                    navigate('/settings');
+                  }} 
+                  sx={{ color: '#fff' }}
+                >
                   <ListItemIcon>
                     <SettingsIcon fontSize="small" sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
                   </ListItemIcon>
