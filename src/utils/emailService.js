@@ -1,73 +1,41 @@
-import emailjs from '@emailjs/browser';
+// Mock email service - no actual emails will be sent
+// This is a temporary solution until email functionality is properly implemented
 
-// Initialize EmailJS with your user ID
-// You need to sign up at https://www.emailjs.com/ and get your user ID
+// Mock initialization function (does nothing)
 const initEmailJS = () => {
-  emailjs.init("YOUR_USER_ID"); // Replace with your actual EmailJS User ID
+  console.log('Mock email service initialized');
 };
 
-// Function to send email when someone has seen the item
+// Mock function for seen email
 export const sendItemSeenEmail = async (itemDetails, finderInfo) => {
-  try {
-    const templateParams = {
-      to_email: itemDetails.email,
-      to_name: itemDetails.name,
-      from_name: finderInfo.name,
-      from_email: finderInfo.email,
-      from_phone: finderInfo.phone,
-      item_name: itemDetails.itemName,
-      location: finderInfo.location,
-      message: finderInfo.message,
-      date_seen: new Date().toLocaleString(),
-      subject: `Someone has seen your lost item: ${itemDetails.itemName}`
-    };
-
-    const response = await emailjs.send(
-      'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
-      'YOUR_TEMPLATE_ID_SEEN', // Replace with your EmailJS template ID for "seen" emails
-      templateParams
-    );
-
-    console.log('Email sent successfully:', response);
-    return { success: true, message: 'Email sent successfully!' };
-  } catch (error) {
-    console.error('Failed to send email:', error);
-    return { success: false, message: 'Failed to send email. Please try again.' };
-  }
+  // Log what would be sent
+  console.log('MOCK: Would send "seen item" email with:', {
+    to: itemDetails.email,
+    item: itemDetails.itemName,
+    finder: finderInfo.name
+  });
+  
+  // Always return success
+  return { 
+    success: true, 
+    message: 'Email would be sent in production' 
+  };
 };
 
-// Function to send email when someone has found the item
+// Mock function for found email
 export const sendItemFoundEmail = async (itemDetails, finderInfo) => {
-  try {
-    const templateParams = {
-      to_email: itemDetails.email,
-      to_name: itemDetails.name,
-      from_name: finderInfo.name,
-      from_email: finderInfo.email,
-      from_phone: finderInfo.phone,
-      item_name: itemDetails.itemName,
-      location: finderInfo.location,
-      message: finderInfo.message,
-      date_found: new Date().toLocaleString(),
-      subject: `Great news! Someone has found your lost item: ${itemDetails.itemName}`
-    };
-
-    const response = await emailjs.send(
-      'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
-      'YOUR_TEMPLATE_ID_FOUND', // Replace with your EmailJS template ID for "found" emails
-      templateParams
-    );
-
-    console.log('Email sent successfully:', response);
-    return { success: true, message: 'Email sent successfully!' };
-  } catch (error) {
-    console.error('Failed to send email:', error);
-    return { success: false, message: 'Failed to send email. Please try again.' };
-  }
+  // Log what would be sent
+  console.log('MOCK: Would send "found item" email with:', {
+    to: itemDetails.email,
+    item: itemDetails.itemName,
+    finder: finderInfo.name
+  });
+  
+  // Always return success
+  return { 
+    success: true, 
+    message: 'Email would be sent in production' 
+  };
 };
 
-export default {
-  initEmailJS,
-  sendItemSeenEmail,
-  sendItemFoundEmail
-}; 
+export { initEmailJS, sendItemSeenEmail, sendItemFoundEmail }; 

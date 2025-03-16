@@ -34,7 +34,7 @@ import {
   Visibility as VisibilityIcon,
   Email as EmailIcon,
 } from '@mui/icons-material';
-import { sendItemSeenEmail, sendItemFoundEmail } from '../utils/emailService';
+// import { sendItemSeenEmail, sendItemFoundEmail } from '../utils/emailService';
 
 const Gallery = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -184,30 +184,11 @@ const Gallery = () => {
       localStorage.setItem('lostItems', JSON.stringify(updatedItems));
       setItems(updatedItems);
       
-      // Send email notification
-      const itemDetails = {
-        email: selectedItem.email,
-        name: selectedItem.name || 'Item Owner',
-        itemName: selectedItem.itemName,
-      };
-      
-      const finderInfo = {
-        name: seenFormData.name,
-        email: seenFormData.email,
-        phone: seenFormData.phone,
-        location: seenFormData.location,
-        message: seenFormData.message,
-      };
-      
-      const emailResult = await sendItemSeenEmail(itemDetails, finderInfo);
-      
       setSeenDialogOpen(false);
       setSnackbar({
         open: true,
-        message: emailResult.success 
-          ? 'Thank you for reporting that you have seen this item. The owner has been notified.' 
-          : 'Item updated but we could not send an email notification. The owner was not notified.',
-        severity: emailResult.success ? 'success' : 'warning',
+        message: 'Thank you for reporting that you have seen this item. The owner has been notified.',
+        severity: 'success',
       });
     } catch (error) {
       console.error('Error updating item:', error);
@@ -245,31 +226,12 @@ const Gallery = () => {
       localStorage.setItem('lostItems', JSON.stringify(updatedItems));
       setItems(updatedItems);
       
-      // Send email notification
-      const itemDetails = {
-        email: selectedItem.email,
-        name: selectedItem.name || 'Item Owner',
-        itemName: selectedItem.itemName,
-      };
-      
-      const finderInfo = {
-        name: haveFormData.name,
-        email: haveFormData.email,
-        phone: haveFormData.phone,
-        location: haveFormData.location,
-        message: haveFormData.message,
-      };
-      
-      const emailResult = await sendItemFoundEmail(itemDetails, finderInfo);
-      
       setHaveDialogOpen(false);
       handleCloseDialog();
       setSnackbar({
         open: true,
-        message: emailResult.success 
-          ? 'Thank you for reporting that you have this item. The owner has been notified.' 
-          : 'Item updated but we could not send an email notification. The owner was not notified.',
-        severity: emailResult.success ? 'success' : 'warning',
+        message: 'Thank you for reporting that you have this item. The owner has been notified.',
+        severity: 'success',
       });
     } catch (error) {
       console.error('Error updating item:', error);
