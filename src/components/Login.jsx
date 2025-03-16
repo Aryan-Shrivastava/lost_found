@@ -248,7 +248,7 @@ const Login = () => {
                   <div className="carousel__item carousel__item--1">
                     <div className="carousel-content">
                       <Typography variant="h4" className="carousel-title">IIIT Hyderabad</Typography>
-                      <img src="https://www.iiit.ac.in/wp-content/uploads/IIIT-Hyderabad-Campus-1.jpg" alt="IIIT Hyderabad Campus" className="carousel-image" />
+                      <img src="https://imgs.search.brave.com/ihFSs8Tl5STPzFLd-okd0l5QS99rVw-5nglTi8fL_uI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/aWlpdC5hYy5pbi93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMi8w/Ni9JSUlUX0h5ZGVy/YWJhZF9Mb2dvLWUx/NjU1MTE2OTM3OTg2/LmpwZw" alt="IIIT Hyderabad Campus" className="carousel-image" />
                       <Typography variant="body2" className="carousel-description">
                         A premier research institution with a 66-acre campus in Gachibowli
                       </Typography>
@@ -257,7 +257,7 @@ const Login = () => {
                   <div className="carousel__item carousel__item--2">
                     <div className="carousel-content">
                       <Typography variant="h4" className="carousel-title">Academic Excellence</Typography>
-                      <img src="https://www.iiit.ac.in/wp-content/uploads/IIIT-Hyderabad-Library.jpg" alt="IIIT Hyderabad Library" className="carousel-image" />
+                      <img src="https://imgs.search.brave.com/ihFSs8Tl5STPzFLd-okd0l5QS99rVw-5nglTi8fL_uI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/aWlpdC5hYy5pbi93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMi8w/Ni9JSUlUX0h5ZGVy/YWJhZF9Mb2dvLWUx/NjU1MTE2OTM3OTg2/LmpwZw" alt="IIIT Hyderabad Library" className="carousel-image" />
                       <Typography variant="body2" className="carousel-description">
                         State-of-the-art facilities for research and education
                       </Typography>
@@ -266,7 +266,7 @@ const Login = () => {
                   <div className="carousel__item carousel__item--3">
                     <div className="carousel-content">
                       <Typography variant="h4" className="carousel-title">Innovation Hub</Typography>
-                      <img src="https://www.iiit.ac.in/wp-content/uploads/IIIT-Hyderabad-Research-Center.jpg" alt="IIIT Hyderabad Research Center" className="carousel-image" />
+                      <img src="https://imgs.search.brave.com/ihFSs8Tl5STPzFLd-okd0l5QS99rVw-5nglTi8fL_uI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/aWlpdC5hYy5pbi93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMi8w/Ni9JSUlUX0h5ZGVy/YWJhZF9Mb2dvLWUx/NjU1MTE2OTM3OTg2/LmpwZw" alt="IIIT Hyderabad Research Center" className="carousel-image" />
                       <Typography variant="body2" className="carousel-description">
                         Leading research in computer science, electronics, and communications
                       </Typography>

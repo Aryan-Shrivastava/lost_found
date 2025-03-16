@@ -70,6 +70,7 @@ const Gallery = () => {
   const theme = useTheme();
   const [seenDialogOpen, setSeenDialogOpen] = useState(false);
   const [haveDialogOpen, setHaveDialogOpen] = useState(false);
+  const [claimDialogOpen, setClaimDialogOpen] = useState(false);
   const [seenFormData, setSeenFormData] = useState({
     location: '',
     date: new Date().toISOString().split('T')[0],
@@ -84,6 +85,13 @@ const Gallery = () => {
     name: '',
     phone: '',
     email: '',
+    message: '',
+  });
+  const [claimFormData, setClaimFormData] = useState({
+    name: currentUser?.displayName || '',
+    email: currentUser?.email || '',
+    phone: '',
+    identifyingDetails: '',
     message: '',
   });
 
@@ -333,6 +341,39 @@ const Gallery = () => {
         severity: 'error',
       });
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClaimItem = () => {
+    setClaimDialogOpen(true);
+  };
+
+  const handleClaimSubmit = async () => {
+    try {
+      setLoading(true);
+      
+      // In a real app, you would send this data to a server
+      // For now, we'll just show a success message
+      
+      setTimeout(() => {
+        setSnackbar({
+          open: true,
+          message: 'Your claim has been submitted. The item owner will contact you soon.',
+          severity: 'success',
+        });
+        
+        setClaimDialogOpen(false);
+        setLoading(false);
+        handleCloseDialog();
+      }, 1000);
+    } catch (error) {
+      console.error('Error submitting claim:', error);
+      setSnackbar({
+        open: true,
+        message: 'Error submitting claim. Please try again.',
+        severity: 'error',
+      });
       setLoading(false);
     }
   };
@@ -740,7 +781,7 @@ const Gallery = () => {
                 {!isItemOwner(selectedItem) && getItemType(selectedItem) === 'found' && (
                   <Button 
                     startIcon={<CheckCircleIcon />} 
-                    onClick={handleHaveObject}
+                    onClick={handleClaimItem}
                     color="success"
                     variant="contained"
                   >
@@ -931,6 +972,90 @@ const Gallery = () => {
             disabled={loading || !haveFormData.name || !haveFormData.email || !haveFormData.location}
           >
             {loading ? <CircularProgress size={24} /> : 'Submit Report'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* "This Is Mine" Dialog */}
+      <Dialog open={claimDialogOpen} onClose={() => setClaimDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ bgcolor: 'success.main', color: 'white' }}>
+          Claim This Item
+        </DialogTitle>
+        <DialogContent dividers>
+          <Typography paragraph>
+            To claim this item, please provide some identifying details that only the true owner would know. This helps verify your ownership.
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Your Name"
+                variant="outlined"
+                value={claimFormData.name}
+                onChange={(e) => setClaimFormData({ ...claimFormData, name: e.target.value })}
+                required
+                margin="normal"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Your Email"
+                variant="outlined"
+                type="email"
+                value={claimFormData.email}
+                onChange={(e) => setClaimFormData({ ...claimFormData, email: e.target.value })}
+                required
+                margin="normal"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Your Phone"
+                variant="outlined"
+                value={claimFormData.phone}
+                onChange={(e) => setClaimFormData({ ...claimFormData, phone: e.target.value })}
+                margin="normal"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Identifying Details (describe something specific about the item that proves it's yours)"
+                variant="outlined"
+                multiline
+                rows={3}
+                value={claimFormData.identifyingDetails}
+                onChange={(e) => setClaimFormData({ ...claimFormData, identifyingDetails: e.target.value })}
+                required
+                margin="normal"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Additional Message"
+                variant="outlined"
+                multiline
+                rows={2}
+                value={claimFormData.message}
+                onChange={(e) => setClaimFormData({ ...claimFormData, message: e.target.value })}
+                margin="normal"
+                placeholder="Any additional information you'd like to share with the finder"
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setClaimDialogOpen(false)}>Cancel</Button>
+          <Button 
+            variant="contained" 
+            color="success" 
+            onClick={handleClaimSubmit}
+            disabled={loading || !claimFormData.name || !claimFormData.email || !claimFormData.identifyingDetails}
+          >
+            {loading ? <CircularProgress size={24} /> : 'Submit Claim'}
           </Button>
         </DialogActions>
       </Dialog>
