@@ -95,6 +95,7 @@ const Login = () => {
       item.style.transform = `rotateY(${angle}rad) translateZ(${radius}px)`;
     });
 
+    // Apply initial rotation
     rotateCarousel(currentSlide);
   };
 
@@ -102,8 +103,12 @@ const Login = () => {
     if (!carouselRef.current) return;
     
     const carousel = carouselRef.current;
-    const angle = slideIndex * -120; // 360 degrees / 3 items = 120 degrees per item
-    carousel.style.transform = `translateZ(-250px) rotateY(${angle}deg)`;
+    const items = carousel.querySelectorAll('.carousel__item');
+    const itemCount = items.length;
+    const theta = 2 * Math.PI / itemCount;
+    const angle = slideIndex * theta * -1;
+    
+    carousel.style.transform = `translateZ(-250px) rotateY(${angle}rad)`;
   };
 
   const nextSlide = () => {

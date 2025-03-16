@@ -16,14 +16,19 @@ import {
   Divider,
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { useItems } from '../context/ItemsContext';
+import { useNavigate } from 'react-router-dom';
 
 const ReportLost = () => {
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const { addLostItem } = useItems();
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
-    itemName: '',
+    title: '',
     description: '',
-    lastSeenLocation: '',
-    lastSeenDate: '',
+    location: '',
+    date: '',
     contactInfo: '',
     email: currentUser.email || '',
     name: currentUser.displayName || '',
@@ -92,35 +97,36 @@ const ReportLost = () => {
       });
 
       const base64Images = await Promise.all(imagePromises);
+      
+      // Use the first image as the main image
+      const mainImage = base64Images.length > 0 ? base64Images[0] : '';
 
       // Create a new lost item object
       const newLostItem = {
-        id: Date.now().toString(),
         ...formData,
+        image: mainImage,
         images: base64Images,
+        userId: currentUser.uid,
         userEmail: currentUser.email,
         userName: currentUser.displayName || 'Anonymous',
-        createdAt: new Date().toISOString(),
-        status: 'lost',
-        seenCount: 0,
-        sightings: [],
       };
 
-      // Get existing items from localStorage
-      const existingItems = JSON.parse(localStorage.getItem('lostItems') || '[]');
-      
-      // Add the new item
-      const updatedItems = [newLostItem, ...existingItems];
-      
-      // Save back to localStorage
-      localStorage.setItem('lostItems', JSON.stringify(updatedItems));
+      // Add the item to context
+      addLostItem(newLostItem);
+
+      // Show success message
+      setSnackbar({
+        open: true,
+        message: 'Lost item reported successfully!',
+        severity: 'success',
+      });
 
       // Reset form
       setFormData({
-        itemName: '',
+        title: '',
         description: '',
-        lastSeenLocation: '',
-        lastSeenDate: '',
+        location: '',
+        date: '',
         contactInfo: '',
         email: currentUser.email || '',
         name: currentUser.displayName || '',
@@ -128,18 +134,16 @@ const ReportLost = () => {
       });
       setImages([]);
       setPreviewImages([]);
-
-      // Show success message
-      setSnackbar({
-        open: true,
-        message: 'Item reported successfully!',
-        severity: 'success',
-      });
+      
+      // Navigate to profile after a short delay
+      setTimeout(() => {
+        navigate('/profile');
+      }, 2000);
     } catch (error) {
       console.error('Error reporting lost item:', error);
       setSnackbar({
         open: true,
-        message: 'Failed to report item. Please try again.',
+        message: 'Error reporting lost item. Please try again.',
         severity: 'error',
       });
     }
@@ -163,8 +167,8 @@ const ReportLost = () => {
                 <TextField
                   fullWidth
                   label="Item Name"
-                  name="itemName"
-                  value={formData.itemName}
+                  name="title"
+                  value={formData.title}
                   onChange={handleInputChange}
                   required
                   variant="outlined"
@@ -187,8 +191,8 @@ const ReportLost = () => {
                 <TextField
                   fullWidth
                   label="Last Seen Location"
-                  name="lastSeenLocation"
-                  value={formData.lastSeenLocation}
+                  name="location"
+                  value={formData.location}
                   onChange={handleInputChange}
                   required
                   variant="outlined"
@@ -198,9 +202,9 @@ const ReportLost = () => {
                 <TextField
                   fullWidth
                   label="Date Lost"
-                  name="lastSeenDate"
+                  name="date"
                   type="date"
-                  value={formData.lastSeenDate}
+                  value={formData.date}
                   onChange={handleInputChange}
                   required
                   variant="outlined"

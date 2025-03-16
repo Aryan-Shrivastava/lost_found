@@ -16,6 +16,7 @@ import Settings from './components/Settings';
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import BackgroundParticles from './components/BackgroundParticles';
+import { ItemsProvider } from './context/ItemsContext';
 import './App.css';
 
 // Create a more modern and accessible theme
@@ -186,88 +187,90 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <BackgroundParticles />
-        <Routes>
-          <Route
-            path="/login"
-            element={user ? <Navigate to="/" /> : <Login />}
-          />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute user={user}>
-                <Navbar />
-                <Home />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/report-lost"
-            element={
-              <ProtectedRoute user={user}>
-                <Navbar />
-                <ReportLost />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/report-found"
-            element={
-              <ProtectedRoute user={user}>
-                <Navbar />
-                <ReportFound />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/gallery"
-            element={
-              <ProtectedRoute user={user}>
-                <Navbar />
-                <Gallery />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute user={user}>
-                <Navbar />
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute user={user}>
-                <Navbar />
-                <Settings />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/faq"
-            element={
-              <ProtectedRoute user={user}>
-                <Navbar />
-                <FAQ />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/about"
-            element={
-              <ProtectedRoute user={user}>
-                <Navbar />
-                <About />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Router>
+      <ItemsProvider>
+        <Router>
+          <BackgroundParticles />
+          <Routes>
+            <Route
+              path="/login"
+              element={user ? <Navigate to="/" /> : <Login />}
+            />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute user={user}>
+                  <Navbar />
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/report-lost"
+              element={
+                <ProtectedRoute user={user}>
+                  <Navbar />
+                  <ReportLost />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/report-found"
+              element={
+                <ProtectedRoute user={user}>
+                  <Navbar />
+                  <ReportFound />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/gallery"
+              element={
+                <ProtectedRoute user={user}>
+                  <Navbar />
+                  <Gallery />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute user={user}>
+                  <Navbar />
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute user={user}>
+                  <Navbar />
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/faq"
+              element={
+                <ProtectedRoute user={user}>
+                  <Navbar />
+                  <FAQ />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <ProtectedRoute user={user}>
+                  <Navbar />
+                  <About />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </Router>
+      </ItemsProvider>
     </ThemeProvider>
   );
 }

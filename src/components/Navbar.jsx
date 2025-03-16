@@ -49,6 +49,15 @@ const Navbar = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Get user from localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   useEffect(() => {
     setActiveTab(location.pathname);
@@ -97,6 +106,43 @@ const Navbar = () => {
     { text: 'FAQ', path: '/faq', icon: <FAQIcon /> },
     { text: 'About', path: '/about', icon: <AboutIcon /> },
   ];
+
+  // Function to get user initials
+  const getUserInitials = () => {
+    if (!user) return 'U';
+    
+    if (user.displayName) {
+      const nameParts = user.displayName.split(' ');
+      if (nameParts.length > 1) {
+        return `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`.toUpperCase();
+      }
+      return user.displayName[0].toUpperCase();
+    }
+    
+    if (user.email) {
+      return user.email[0].toUpperCase();
+    }
+    
+    return 'U';
+  };
+
+  // Function to get avatar color based on user email
+  const getAvatarColor = () => {
+    if (!user || !user.email) return '#ff0000';
+    
+    // Simple hash function to generate color from email
+    let hash = 0;
+    for (let i = 0; i < user.email.length; i++) {
+      hash = user.email.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    // Convert hash to RGB color
+    const r = (hash & 0xFF0000) >> 16;
+    const g = (hash & 0x00FF00) >> 8;
+    const b = hash & 0x0000FF;
+    
+    return `rgb(${r}, ${g}, ${b})`;
+  };
 
   const drawer = (
     <Box sx={{ 
@@ -308,12 +354,13 @@ const Navbar = () => {
 
             {/* User Menu */}
             <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
+              <Tooltip title={user?.displayName || user?.email || "User Settings"}>
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar 
-                    alt="User" 
-                    src="/static/images/avatar/2.jpg" 
+                    alt={user?.displayName || user?.email || "User"} 
+                    src={user?.photoURL || ""}
                     sx={{ 
+                      bgcolor: user?.photoURL ? 'transparent' : getAvatarColor(),
                       border: '2px solid rgba(255, 255, 255, 0.2)',
                       boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
                       transition: 'all 0.3s ease',
@@ -322,7 +369,9 @@ const Navbar = () => {
                         boxShadow: '0 0 15px rgba(63, 81, 181, 0.5)',
                       }
                     }}
-                  />
+                  >
+                    {!user?.photoURL && getUserInitials()}
+                  </Avatar>
                 </IconButton>
               </Tooltip>
               <Menu
@@ -351,6 +400,17 @@ const Navbar = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
+                {user && (
+                  <Box sx={{ px: 2, py: 1, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                    <Typography variant="subtitle1" sx={{ color: '#fff', fontWeight: 'bold' }}>
+                      {user.displayName || 'User'}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      {user.email}
+                    </Typography>
+                  </Box>
+                )}
+                
                 <MenuItem 
                   onClick={() => {
                     handleCloseUserMenu();

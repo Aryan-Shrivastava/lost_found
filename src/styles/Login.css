@@ -56,7 +56,7 @@
   height: 100%;
   position: absolute;
   transform-style: preserve-3d;
-  transition: transform 1s;
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .carousel__item {
@@ -68,8 +68,9 @@
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  transition: all 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   backface-visibility: hidden;
+  will-change: transform;
 }
 
 .carousel__item:hover {

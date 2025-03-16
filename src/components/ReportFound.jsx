@@ -27,7 +27,8 @@ import {
   CalendarToday as CalendarIcon,
   CheckCircle as CheckCircleIcon
 } from '@mui/icons-material';
-import { v4 as uuidv4 } from 'uuid';
+import { useItems } from '../context/ItemsContext';
+import { useNavigate } from 'react-router-dom';
 
 const categories = [
   'Electronics',
@@ -45,6 +46,8 @@ const categories = [
 
 const ReportFound = () => {
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const { addFoundItem } = useItems();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -131,86 +134,26 @@ const ReportFound = () => {
     try {
       // Create a new found item object
       const newFoundItem = {
-        id: uuidv4(),
-        itemName: formData.itemName,
+        title: formData.itemName,
         category: formData.category,
         description: formData.description,
-        foundLocation: formData.foundLocation,
-        foundDate: formData.foundDate,
+        location: formData.foundLocation,
+        date: formData.foundDate,
         contactInfo: formData.contactInfo,
+        image: formData.images.length > 0 ? formData.images[0] : '',
         images: formData.images,
         additionalInfo: formData.additionalInfo,
-        status: 'found',
+        userId: currentUser.uid,
         userEmail: currentUser.email,
         userName: currentUser.displayName || '',
-        createdAt: new Date().toISOString(),
-        matchStatus: 'pending', // pending, matched, claimed
       };
       
-      // Get existing found items from localStorage
-      const existingFoundItems = JSON.parse(localStorage.getItem('foundItems') || '[]');
+      // Add the item to context
+      addFoundItem(newFoundItem);
       
-      // Add new found item to the list
-      const updatedFoundItems = [newFoundItem, ...existingFoundItems];
-      
-      // Save to localStorage
-      localStorage.setItem('foundItems', JSON.stringify(updatedFoundItems));
-      
-      // Check for potential matches with lost items
-      const lostItems = JSON.parse(localStorage.getItem('lostItems') || '[]');
-      
-      // Simple matching algorithm based on category and keywords in description
-      const potentialMatches = lostItems.filter(lostItem => {
-        // Match by category
-        if (lostItem.category === newFoundItem.category) {
-          // Check for keyword matches in description
-          const lostDesc = lostItem.description.toLowerCase();
-          const foundDesc = newFoundItem.description.toLowerCase();
-          const lostName = lostItem.itemName.toLowerCase();
-          const foundName = newFoundItem.itemName.toLowerCase();
-          
-          // Check if descriptions or names have common words
-          return (
-            lostDesc.includes(foundName) || 
-            foundDesc.includes(lostName) ||
-            lostName.includes(foundName) ||
-            foundName.includes(lostName)
-          );
-        }
-        return false;
-      });
-      
-      // If matches found, store them
-      if (potentialMatches.length > 0) {
-        // Get existing matches
-        const existingMatches = JSON.parse(localStorage.getItem('itemMatches') || '[]');
-        
-        // Create a new match entry
-        const newMatch = {
-          id: uuidv4(),
-          foundItemId: newFoundItem.id,
-          lostItemIds: potentialMatches.map(item => item.id),
-          createdAt: new Date().toISOString(),
-          status: 'pending'
-        };
-        
-        // Add to matches
-        localStorage.setItem('itemMatches', JSON.stringify([...existingMatches, newMatch]));
-        
-        // Show success with match notification
-        setSnackbar({
-          open: true,
-          message: `Item reported successfully! We found ${potentialMatches.length} potential matches.`,
-          severity: 'success',
-        });
-      } else {
-        // Show regular success
-        setSnackbar({
-          open: true,
-          message: 'Item reported successfully!',
-          severity: 'success',
-        });
-      }
+      // Show success message
+      setSuccess(true);
+      setLoading(false);
       
       // Reset form
       setFormData({
@@ -218,18 +161,20 @@ const ReportFound = () => {
         category: '',
         description: '',
         foundLocation: '',
-        foundDate: new Date().toISOString().split('T')[0],
-        contactInfo: currentUser.phoneNumber || '',
+        foundDate: '',
+        contactInfo: '',
         images: [],
         additionalInfo: '',
       });
       setImagePreviewUrls([]);
-      setSuccess(true);
       
+      // Navigate to profile after a short delay
+      setTimeout(() => {
+        navigate('/profile');
+      }, 2000);
     } catch (error) {
       console.error('Error reporting found item:', error);
       setError('Failed to report found item. Please try again.');
-    } finally {
       setLoading(false);
     }
   };
